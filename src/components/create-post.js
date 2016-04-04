@@ -4,46 +4,57 @@ import { Link } from 'react-router';
 import { createPost } from '../actions/index';
 
 class CreatePost extends Component {
+  static contextTypes = {
+    router: () => { return PropTypes.func.isRequired; }
+  }
+
   checkValidation(field) {
     return `form-group ${(field.touched && field.invalid) ? 'has-error' : ''}`;
+  }
+
+  onSubmit(props) {
+    this.props.createPost(props)
+    .then(() => {
+      this.context.router.push('/');
+    });
   }
 
   render() {
     const { fields: { title, categories, content }, handleSubmit } = this.props;
     return (
-      <form onSubmit={handleSubmit(this.props.createPost)}>
-        <div className={this.checkValidation(title)}>
-          <label htmlFor="title">Title</label>
-          <input type="text" className="form-control" id="title" {...title} />
-          <div className="help-block">{ (title.touched && title.error) ? title.error : '' }</div>
-        </div>
-        <div className={this.checkValidation(categories)}>
-          <label htmlFor="categories">Categories</label>
-          <input type="text" className="form-control" id="categories" {...categories} />
-          <div className="help-block">
-            { (categories.touched && categories.error) ? categories.error : '' }
-          </div>
-        </div>
-        <div className={this.checkValidation(content)}>
-          <label htmlFor="content">Content</label>
-          <textarea className="form-control" rows="11" id="content" {...content} ></textarea>
-          <div className="help-block">
-            { (content.touched && content.error) ? content.error : '' }
-          </div>
-        </div>
-        <button type="submit" className="btn btn-primary">
-          <i className="fa fa-paper-plane"></i> Submit
-        </button>
-        <Link to="/" className="btn btn-danger">Cancel</Link>
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+      <div className={this.checkValidation(title)}>
+      <label htmlFor="title">Title</label>
+      <input type="text" className="form-control" id="title" {...title} />
+      <div className="help-block">{ (title.touched && title.error) ? title.error : '' }</div>
+      </div>
+      <div className={this.checkValidation(categories)}>
+      <label htmlFor="categories">Categories</label>
+      <input type="text" className="form-control" id="categories" {...categories} />
+      <div className="help-block">
+      { (categories.touched && categories.error) ? categories.error : '' }
+      </div>
+      </div>
+      <div className={this.checkValidation(content)}>
+      <label htmlFor="content">Content</label>
+      <textarea className="form-control" rows="11" id="content" {...content} ></textarea>
+      <div className="help-block">
+      { (content.touched && content.error) ? content.error : '' }
+      </div>
+      </div>
+      <button type="submit" className="btn btn-primary">
+      <i className="fa fa-paper-plane"></i> Submit
+      </button>
+      <Link to="/" className="btn btn-danger">Cancel</Link>
       </form>
     );
   }
 }
 
 CreatePost.propTypes = {
-  fields: PropTypes.object,
-  handleSubmit: PropTypes.func,
-  createPost: PropTypes.func,
+  fields: PropTypes.object.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  createPost: PropTypes.func.isRequired,
 };
 
 function validate(values) {
